@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - cv-ar.html
+      - cv-en.html
       - .github/workflows/arabic-cv.yml
   workflow_dispatch:
 permissions:
@@ -16,12 +17,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y fonts-noto-core poppler-utils
           google-chrome --headless --no-sandbox --disable-dev-shm-usage --no-pdf-header-footer --print-to-pdf="$PWD/Sameh_ElHakim_ATS_CV_AR.pdf" "file://$PWD/cv-ar.html"
+          google-chrome --headless --no-sandbox --disable-dev-shm-usage --no-pdf-header-footer --print-to-pdf="$PWD/Sameh_ElHakim_ATS_CV.pdf" "file://$PWD/cv-en.html"
+          pdftotext Sameh_ElHakim_ATS_CV.pdf /tmp/en.txt
+          grep -q 'Senior HSE Engineer' /tmp/en.txt
+          grep -q 'Junior HSE Engineer' /tmp/en.txt
+          grep -q 'HSE Head of Section' /tmp/en.txt
           pdftotext Sameh_ElHakim_ATS_CV_AR.pdf /tmp/cv.txt
           test -s /tmp/cv.txt
           grep -q 'Primavera' /tmp/cv.txt
           sed -i 's/href="cv-ar.html"/href="Sameh_ElHakim_ATS_CV_AR.pdf" download/g' ar.html
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Sameh_ElHakim_ATS_CV_AR.pdf ar.html
+          git add Sameh_ElHakim_ATS_CV_AR.pdf Sameh_ElHakim_ATS_CV.pdf ar.html
           git diff --cached --quiet || git commit -m "Publish Arabic resume PDF"
           git push
