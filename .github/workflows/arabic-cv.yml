@@ -19,7 +19,7 @@ jobs:
           pdftotext Sameh_ElHakim_ATS_CV_AR.pdf /tmp/cv.txt
           test -s /tmp/cv.txt
           grep -q 'Primavera' /tmp/cv.txt
-          python -c 'from pathlib import Path; p=Path("ar.html"); p.write_text(p.read_text().replace('href="cv-ar.html"', 'href="Sameh_ElHakim_ATS_CV_AR.pdf" download'))'
+          sed -i 's/href="cv-ar.html"/href="Sameh_ElHakim_ATS_CV_AR.pdf" download/g' ar.html
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Sameh_ElHakim_ATS_CV_AR.pdf ar.html
