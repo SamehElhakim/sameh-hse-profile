@@ -1,0 +1,27 @@
+name: Build Arabic CV
+on:
+  push:
+    paths:
+      - cv-ar.html
+      - .github/workflows/arabic-cv.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core poppler-utils
+          google-chrome --headless --no-sandbox --disable-dev-shm-usage --no-pdf-header-footer --print-to-pdf="$PWD/Sameh_ElHakim_ATS_CV_AR.pdf" "file://$PWD/cv-ar.html"
+          pdftotext Sameh_ElHakim_ATS_CV_AR.pdf /tmp/cv.txt
+          test -s /tmp/cv.txt
+          grep -q 'Primavera' /tmp/cv.txt
+          python -c 'from pathlib import Path; p=Path("ar.html"); p.write_text(p.read_text().replace('href="cv-ar.html"', 'href="Sameh_ElHakim_ATS_CV_AR.pdf" download'))'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Sameh_ElHakim_ATS_CV_AR.pdf ar.html
+          git diff --cached --quiet || git commit -m "Publish Arabic resume PDF"
+          git push
